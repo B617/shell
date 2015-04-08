@@ -157,7 +157,6 @@ void rmJob(int sig, siginfo_t *sip, void* noused){
 /*组合键命令ctrl+z*/
 void ctrl_Z(){
     Job *now = NULL;
-    
     if(fgPid == 0){ //前台没有作业则直接返回
         return;
     }
@@ -526,6 +525,7 @@ void execOuterCmd(SimpleCmd *cmd){
             }else{ //非后台命令
                 fgPid = pid;
                 waitpid(pid, NULL, 0);
+				fgPid=0;
             }
 		}
     }else{ //命令不存在
