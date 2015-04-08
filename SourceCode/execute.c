@@ -198,7 +198,7 @@ void fg_exec(int pid){
 		now = now->next;
     
     if(now == NULL){ //未找到作业
-        printf("pid为7%d 的作业不存在！\n", pid);
+        printf("pid为%7d 的作业不存在！\n", pid);
         return;
     }
 
@@ -230,7 +230,7 @@ void bg_exec(int pid){
 		now = now->next;
     
     if(now == NULL){ //未找到作业
-        printf("pid为7%d 的作业不存在！\n", pid);
+        printf("pid为%7d 的作业不存在！\n", pid);
         return;
     }
     
@@ -529,7 +529,7 @@ void execOuterCmd(SimpleCmd *cmd){
             }
 		}
     }else{ //命令不存在
-        printf("找不到命令 15%s\n", inputBuff);
+        printf("找不到命令 %15s\n", inputBuff);
     }
 }
 
@@ -575,7 +575,7 @@ void execSimpleCmd(SimpleCmd *cmd){
                 fg_exec(pid);
             }
         }else{
-            printf("fg; 参数不合法，正确格式为：fg %<int>\n");
+            printf("fg 参数不合法，正确格式为：fg %%<int>\n");
         }
     } else if (strcmp(cmd->args[0], "bg") == 0) { //bg命令
         temp = cmd->args[1];
@@ -587,7 +587,7 @@ void execSimpleCmd(SimpleCmd *cmd){
             }
         }
 		else{
-            printf("bg; 参数不合法，正确格式为：bg %<int>\n");
+            printf("bg 参数不合法，正确格式为：bg %%<int>\n");
         }
     } else{ //外部命令
         execOuterCmd(cmd);
