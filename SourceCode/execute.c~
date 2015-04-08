@@ -94,6 +94,13 @@ void release(){
     }
 }
 
+/*file copy*/
+void file_copy(FILE *filein,FILE *fileout){
+	char c;
+	while((c=getc(filein))!=EOF){
+		putc(c,fileout);
+	}
+}
 /*******************************************************
                   信号以及jobs相关
 ********************************************************/
@@ -577,6 +584,7 @@ void execSimpleCmd(SimpleCmd *cmd){
     int i, pid;
     char *temp;
     Job *now = NULL;
+	FILE *f;
     
     if(strcmp(cmd->args[0], "exit") == 0) { //exit命令
         exit(0);
@@ -628,7 +636,22 @@ void execSimpleCmd(SimpleCmd *cmd){
 		else{
             printf("bg 参数不合法，正确格式为：bg %%<int>\n");
         }
-    } else{ //外部命令
+    } else if (strcmp(cmd->args[0], "cat") ==0) { //cat命令
+		temp = cmd->args[1];
+		if(temp==NULL){
+			printf("cat 参数不合法，正确格式为: cat <filename> <filename>...\n");
+		}
+		else{
+			for(i=1;temp!=NULL;){
+				f=fopen(temp,"r");
+				file_copy(f,stdout);
+				printf("%d\n",i);
+				fclose(f);
+				i++;
+				temp=cmd->args[i];
+			}
+		}
+	} else{ //外部命令
         execOuterCmd(cmd);
     }
     
