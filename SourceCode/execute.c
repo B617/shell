@@ -193,13 +193,13 @@ void ctrl_C(){
         return;
     }
 
+	//打印提示信息
+    printf("[%d] is killed\n", fgPid);
 	//发送SIGSTOP信号给正在前台运作的工作，将其停止
     kill(fgPid, SIGSTOP);
     fgPid = 0;
     //SIGCHLD信号产生自ctrl+c
     ingnore = 1;
-	//打印提示信息
-    printf("[%d] is killed\n", fgPid);
 
 	if(head==NULL){
 		return;
