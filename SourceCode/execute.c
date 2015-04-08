@@ -644,6 +644,10 @@ void execSimpleCmd(SimpleCmd *cmd){
 		else{
 			for(i=1;temp!=NULL;){
 				f=fopen(temp,"r");
+				if(f==NULL){
+					printf("%s not found\n",temp);
+					break;
+				}
 				file_copy(f,stdout);
 				fclose(f);
 				i++;
