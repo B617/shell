@@ -721,6 +721,7 @@ int execPipeCmd(SimpleCmd *cmd1,SimpleCmd *cmd2){
 	}
 	if(pid[0]){
 		/*父进程*/
+		waitpid(pid[0],&status,0);
 		/*为cmd2创建子进程*/
 		if((pid[1]=fork())<0){
 			perror("fork failed");
