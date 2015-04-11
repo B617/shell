@@ -65,13 +65,12 @@
 #line 1 "bison.y" /* yacc.c:339  */
 
     #include "global.h"
-
     int yylex ();
     void yyerror ();
       
     int offset, len, commandDone;
 
-#line 75 "bison.tab.c" /* yacc.c:339  */
+#line 74 "bison.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -123,7 +122,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 127 "bison.tab.c" /* yacc.c:358  */
+#line 126 "bison.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -420,8 +419,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    13,    13,    14,    17,    18,    21,    24,    27,    30,
-      31,    34,    35,    38,    39
+       0,    12,    12,    13,    16,    17,    20,    23,    26,    29,
+      30,    33,    34,    37,    38
 };
 #endif
 
@@ -1193,13 +1192,13 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 14 "bison.y" /* yacc.c:1646  */
+#line 13 "bison.y" /* yacc.c:1646  */
     {   execute();  commandDone = 1;   }
-#line 1199 "bison.tab.c" /* yacc.c:1646  */
+#line 1198 "bison.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1203 "bison.tab.c" /* yacc.c:1646  */
+#line 1202 "bison.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1427,24 +1426,23 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 42 "bison.y" /* yacc.c:1906  */
-
+#line 41 "bison.y" /* yacc.c:1906  */
 
 /****************************************************************
-                  ´Ê·¨·ÖÎöº¯Êı
+                  è¯æ³•åˆ†æå‡½æ•°
 ****************************************************************/
 int yylex(){
-    //Õâ¸öº¯ÊıÓÃÀ´¼ì²éinputBuffÊÇ·ñÂú×ãlexµÄ¶¨Òå£¬Êµ¼ÊÉÏ²¢²»½øĞĞÈÎºÎ²Ù×÷£¬³õÆÚ¿ÉÂÔ¹ı²»¿´
+    //è¿™ä¸ªå‡½æ•°ç”¨æ¥æ£€æŸ¥inputBuffæ˜¯å¦æ»¡è¶³lexçš„å®šä¹‰ï¼Œå®é™…ä¸Šå¹¶ä¸è¿›è¡Œä»»ä½•æ“ä½œï¼ŒåˆæœŸå¯ç•¥è¿‡ä¸çœ‹
     int flag;
     char c;
     
-	//Ìø¹ı¿Õ¸ñµÈÎŞÓÃĞÅÏ¢
+	//è·³è¿‡ç©ºæ ¼ç­‰æ— ç”¨ä¿¡æ¯
     while(offset < len && (inputBuff[offset] == ' ' || inputBuff[offset] == '\t')){ 
         offset++;
     }
     
     flag = 0;
-    while(offset < len){ //Ñ­»·½øĞĞ´Ê·¨·ÖÎö£¬·µ»ØÖÕ½á·û
+    while(offset < len){ //å¾ªç¯è¿›è¡Œè¯æ³•åˆ†æï¼Œè¿”å›ç»ˆç»“ç¬¦
         c = inputBuff[offset];
         
         if(c == ' ' || c == '\t'){
@@ -1471,46 +1469,45 @@ int yylex(){
         return 0;
     }
 }
-
 /****************************************************************
-                  ´íÎóĞÅÏ¢Ö´ĞĞº¯Êı
+                  é”™è¯¯ä¿¡æ¯æ‰§è¡Œå‡½æ•°
 ****************************************************************/
 void yyerror()
 {
-    printf("ÄãÊäÈëµÄÃüÁî²»ÕıÈ·£¬ÇëÖØĞÂÊäÈë£¡\n");
+    printf("ä½ è¾“å…¥çš„å‘½ä»¤ä¸æ­£ç¡®ï¼Œè¯·é‡æ–°è¾“å…¥ï¼\n");
 }
-
 /****************************************************************
-                  mainÖ÷º¯Êı
+                  mainä¸»å‡½æ•°
 ****************************************************************/
 int main(int argc, char** argv) {
     int i;
     char c;
-
-    init(); //³õÊ¼»¯»·¾³
+    init(); //åˆå§‹åŒ–ç¯å¢ƒ
     commandDone = 0;
     
-    printf("chilu@Ubuntu:%s$ ", get_current_dir_name()); //´òÓ¡ÌáÊ¾·ûĞÅÏ¢
-
+    printf("chilu@Ubuntu:%s$ ", get_current_dir_name()); //æ‰“å°æç¤ºç¬¦ä¿¡æ¯
     while(1){
         i = 0;
-        while((c = getchar()) != '\n'){ //¶ÁÈëÒ»ĞĞÃüÁî
-            inputBuff[i++] = c;
+        while((c = getchar()) != '\n'){ //è¯»å…¥ä¸€è¡Œå‘½ä»¤
+			if(c>=0){
+           	 inputBuff[i++] = c;
+			}
         }
         inputBuff[i] = '\0';
+
+//		printf("%s\n",inputBuff);
+//		printf("%d\n",i);
 
         len = i;
         offset = 0;
         
-        yyparse(); //µ÷ÓÃÓï·¨·ÖÎöº¯Êı£¬¸Ãº¯ÊıÓÉyylex()Ìá¹©µ±Ç°ÊäÈëµÄµ¥´Ê·ûºÅ
-
-        if(commandDone == 1){ //ÃüÁîÒÑ¾­Ö´ĞĞÍê³Éºó£¬Ìí¼ÓÀúÊ·¼ÇÂ¼ĞÅÏ¢
+        yyparse(); //è°ƒç”¨è¯­æ³•åˆ†æå‡½æ•°ï¼Œè¯¥å‡½æ•°ç”±yylex()æä¾›å½“å‰è¾“å…¥çš„å•è¯ç¬¦å·
+        if(commandDone == 1){ //å‘½ä»¤å·²ç»æ‰§è¡Œå®Œæˆåï¼Œæ·»åŠ å†å²è®°å½•ä¿¡æ¯
             commandDone = 0;
             addHistory(inputBuff);
         }
         
-        printf("chilu@Ubuntu:%s$ ", get_current_dir_name()); //´òÓ¡ÌáÊ¾·ûĞÅÏ¢
+        printf("chilu@Ubuntu:%s$ ", get_current_dir_name()); //æ‰“å°æç¤ºç¬¦ä¿¡æ¯
      }
-
     return (EXIT_SUCCESS);
 }

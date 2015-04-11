@@ -1,3 +1,6 @@
+#ifndef	_GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -13,7 +16,7 @@
 #include <sys/termios.h>
 
 #include "global.h"
-#define DEBUG
+//#define DEBUG
 int goon = 0, ingnore = 0;       //用于设置signal信号量
 char *envPath[10], cmdBuff[40];  //外部命令的存放路径及读取外部命令的缓冲空间
 History history;                 //历史命令
@@ -375,9 +378,10 @@ SimpleCmd* handleSimpleCmdStr(int begin, int end){
     char c, buff[10][40], inputFile[30], outputFile[30], *temp = NULL;
     SimpleCmd *cmd = (SimpleCmd*)malloc(sizeof(SimpleCmd));
     
-	//默认为非后台命令，输入输出重定向为null
+	//默认为非后台命令，输入输出重定向为null，管道指令为null
     cmd->isBack = 0;
     cmd->input = cmd->output = NULL;
+	cmd->nextCmd=NULL;
     
     //初始化相应变量
     for(i = begin; i<10; i++){
@@ -451,7 +455,21 @@ SimpleCmd* handleSimpleCmdStr(int begin, int end){
                 fileFinished = 1;
                 i++;
                 break;
-                
+
+            case '|'://管道指令的标志
+				if(j!=0){
+					temp[j]='\0';
+					j=0;
+					if(!fileFinished){
+						k++;
+						temp=buff[k];
+					}
+				}
+				i++;
+				cmd->nextCmd=handleSimpleCmdStr(i, end);
+				fileFinished=1;
+				break;
+
             default: //默认则读入到temp指定的空间
                 temp[j++] = inputBuff[i++];
                 continue;
@@ -494,12 +512,19 @@ SimpleCmd* handleSimpleCmdStr(int begin, int end){
     }
     #ifdef DEBUG
     printf("****\n");
+	printf("inputbuff= %s\n",inputBuff);
     printf("isBack: %d\n",cmd->isBack);
     	for(i = 0; cmd->args[i] != NULL; i++){
     		printf("args[%d]: %s\n",i,cmd->args[i]);
 	}
     printf("input: %s\n",cmd->input);
     printf("output: %s\n",cmd->output);
+	if(cmd->nextCmd==NULL){
+		printf("nextCmd=NULL\n");
+	}
+	else{
+		printf("nextCmd exists\n");
+	}
     printf("****\n");
     #endif
     return cmd;
@@ -666,10 +691,71 @@ void execSimpleCmd(SimpleCmd *cmd){
     }
 }
 
+//执行管道指令
+int execPipeCmd(SimpleCmd *cmd1,SimpleCmd *cmd2){
+	int status;
+	int pid[2];
+	int pipe_fd[2];
+	
+	//创建管道
+	if(pipe(pipe_fd)<0){
+		perror("pipe failed");
+		return -1;
+	}
+
+	//为cmd1创建进程
+	if((pid[0]=fork())<0){
+		perror("fork failed");
+		return -1;
+	}
+
+	if(!pid[0]){
+		/*子进程*/
+		/*将管道的写描述符复制给标准输出，然后关闭*/
+		close(pipe_fd[0]);
+		dup2(pipe_fd[1],1);
+		close(pipe_fd[1]);
+		/*执行cmd1*/
+		execSimpleCmd(cmd1);
+		exit(0);
+	}
+	if(pid[0]){
+		/*父进程*/
+		/*为cmd2创建子进程*/
+		if((pid[1]=fork())<0){
+			perror("fork failed");
+			return -1;
+		}
+		if(!pid[1]){
+			/*子进程*/
+			/*将管道的读描述符复制给标准输入*/
+			close(pipe_fd[1]);
+			dup2(pipe_fd[0],0);
+			close(pipe_fd[0]);
+			/*执行cmd2*/
+//			printf("execute cmd2\n");
+			execSimpleCmd(cmd2);
+			exit(0);
+		}
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		waitpid(pid[1],&status,0);
+	}
+	return 0;
+}
+
 /*******************************************************
                      命令执行接口
 ********************************************************/
 void execute(){
     SimpleCmd *cmd = handleSimpleCmdStr(0, strlen(inputBuff));
-    execSimpleCmd(cmd);
+	if(cmd->nextCmd!=NULL){
+		if(execPipeCmd(cmd,cmd->nextCmd)){
+			printf("pipe error\n");
+		}
+		free(cmd->nextCmd);
+	}
+	else{
+		execSimpleCmd(cmd);
+	}
 }

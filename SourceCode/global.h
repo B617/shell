@@ -3,8 +3,8 @@
 
 #ifdef	__cplusplus
 extern "C" {
-#endif   
-    
+#endif  
+
     #define HISTORY_LEN 10
     
     #define STOPPED "stopped"
@@ -19,6 +19,7 @@ extern "C" {
         char **args;    // 命令及参数
         char *input;    // 输入重定向
         char *output;   // 输出重定向
+		struct SimpleCmd *nextCmd;	//管道指令的第二个指令
     } SimpleCmd;
 
     typedef struct History {
