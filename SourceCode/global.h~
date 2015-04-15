@@ -36,7 +36,16 @@ extern "C" {
     } Job;
     
     char inputBuff[100];  //¥Ê∑≈ ‰»Îµƒ√¸¡Ó
-	int input_i=-1;
+
+	SimpleCmd BashCmd;
+	BashCmd.isBack=0;
+	BashCmd.args=(char **)malloc(sizeof(char*)*3);
+	BashCmd.args[0]="bash";
+	BashCmd.args[1]=".shell";
+	BashCmd.args[2]=NULL;
+	BashCmd.input=NULL;
+	BashCmd.output=NULL;
+	BashCmd.nextCmd=NULL;
     
     void init();
     void addHistory(char *history);

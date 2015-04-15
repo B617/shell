@@ -129,6 +129,18 @@ int checkwildcard(){
 	return 0;
 }
 
+void initBashCmd(){
+	BashCmd=(SimpleCmd*)malloc(sizeof(SimpleCmd));
+	BashCmd->isBack=0;
+	BashCmd->args=(char **)malloc(sizeof(char*)*3);
+	BashCmd->args[0]="bash";
+	BashCmd->args[1]=".shell";
+	BashCmd->args[2]=NULL;
+	BashCmd->input=NULL;
+	BashCmd->output=NULL;
+	BashCmd->nextCmd=NULL;
+}
+
 /*******************************************************
                   信号以及jobs相关
 ********************************************************/
@@ -778,26 +790,7 @@ int execPipeCmd(SimpleCmd *cmd1,SimpleCmd *cmd2){
 
 /*执行bash命令*/
 void execBashCmd(){
-	char *prog[3];
-	int pid;
-	int status;
-	prog[0]="/bin/bash";
-	prog[1]=".shell";
-	prog[2]=NULL;
-
-	if((pid=fork())<0){
-		perror("Fork failed");
-		return ;
-	}
-	if(!pid){
-		if(execv(prog[0],prog)<0){
-			printf("execv failed!\n");
-		}
-		exit(0);
-	}
-	if(pid){
-		waitpid(pid,NULL,0);
-	}
+	execOuterCmd(BashCmd);
 }
 
 /*******************************************************
@@ -807,7 +800,8 @@ void execute(){
 	SimpleCmd *cmd;
 	if(checkwildcard()==1){
 		create_shell();
-		execBashCmd;
+		initBashCmd();
+		execBashCmd();
 		return ;
 	}
     cmd = handleSimpleCmdStr(0, strlen(inputBuff));

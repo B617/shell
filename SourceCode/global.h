@@ -36,6 +36,8 @@ extern "C" {
     } Job;
     
     char inputBuff[100];  //´æ·ÅÊäÈëµÄÃüÁî
+
+	SimpleCmd *BashCmd;
     
     void init();
     void addHistory(char *history);

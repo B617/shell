@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
     commandDone = 0;
     
     printf("chilu@Ubuntu:%s$ ", get_current_dir_name()); //打印提示符信息
-    while(1){  
+    while(1){
         yyparse(); //调用语法分析函数，该函数由yylex()提供当前输入的单词符号
         if(commandDone == 1){ //命令已经执行完成后，添加历史记录信息
             commandDone = 0;
