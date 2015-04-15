@@ -104,6 +104,26 @@ void file_copy(FILE *filein,FILE *fileout){
 		putc(c,fileout);
 	}
 }
+
+/*create .shell*/
+void create_shell(){
+	FILE *f;
+	f=fopen(".shell","w");
+	fputs(inputBuff,f);
+	fclose(f);
+}
+
+/*check '*' or '?'*/
+int checkwildcard(){
+	int i;
+	int l=strlen(inputBuff);
+	for(i=0;i<l;i++){
+		if(inputBuff[i]=='*'||inputBuff[i]=='?')
+			return 1;
+	}
+	return 0;
+}
+
 /*******************************************************
                   信号以及jobs相关
 ********************************************************/
@@ -580,6 +600,7 @@ void execOuterCmd(SimpleCmd *cmd){
             justArgs(cmd->args[0]);
             if(execv(cmdBuff, cmd->args) < 0){ //执行命令
                 printf("execv failed!\n");
+				fgPid=0;
                 return;
             }
         }
@@ -601,6 +622,7 @@ void execOuterCmd(SimpleCmd *cmd){
 		}
     }else{ //命令不存在
         printf("找不到命令 %15s\n", inputBuff);
+		fgPid=0;
     }
 }
 
@@ -745,11 +767,41 @@ int execPipeCmd(SimpleCmd *cmd1,SimpleCmd *cmd2){
 	return 0;
 }
 
+/*执行bash命令*/
+void execBashCmd(){
+	char *prog[3];
+	int pid;
+	int status;
+	prog[0]="/bin/bash";
+	prog[1]=".shell";
+	prog[2]=NULL;
+
+	if((pid=fork())<0){
+		perror("Fork failed");
+		return ;
+	}
+	if(!pid){
+		if(execv(prog[0],prog)<0){
+			printf("execv failed!\n");
+		}
+		exit(0);
+	}
+	if(pid){
+		waitpid(pid,NULL,0);
+	}
+}
+
 /*******************************************************
                      命令执行接口
 ********************************************************/
 void execute(){
-    SimpleCmd *cmd = handleSimpleCmdStr(0, strlen(inputBuff));
+	SimpleCmd *cmd;
+	if(checkwildcard()==1){
+		create_shell();
+		execBashCmd;
+		return ;
+	}
+    cmd = handleSimpleCmdStr(0, strlen(inputBuff));
 	if(cmd->nextCmd!=NULL){
 		if(execPipeCmd(cmd,cmd->nextCmd)){
 			printf("pipe error\n");

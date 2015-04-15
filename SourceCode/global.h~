@@ -3,8 +3,7 @@
 
 #ifdef	__cplusplus
 extern "C" {
-#endif   
-    #define  _GNU_SOURCE
+#endif  
 
     #define HISTORY_LEN 10
     
@@ -37,6 +36,7 @@ extern "C" {
     } Job;
     
     char inputBuff[100];  //´æ·ÅÊäÈëµÄÃüÁî
+	int input_i=-1;
     
     void init();
     void addHistory(char *history);
