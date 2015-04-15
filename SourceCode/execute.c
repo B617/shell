@@ -18,6 +18,7 @@
 #include "global.h"
 //#define DEBUG
 int goon = 0, ingnore = 0;       //用于设置signal信号量
+int goon2=0;
 char *envPath[10], cmdBuff[40];  //外部命令的存放路径及读取外部命令的缓冲空间
 History history;                 //历史命令
 Job *head = NULL;                //作业头指针
@@ -87,6 +88,10 @@ void justArgs(char *str){
 /*设置goon*/
 void setGoon(){
     goon = 1;
+}
+
+void setGoon2(){
+	goon2=1;
 }
 
 /*释放环境变量空间*/
@@ -590,6 +595,7 @@ void execOuterCmd(SimpleCmd *cmd){
             
             if(cmd->isBack){ //若是后台运行命令，等待父进程增加作业
                 signal(SIGUSR1, setGoon); //收到信号，setGoon函数将goon置1，以跳出下面的循环
+				kill(getppid(), SIGUSR2);
                 while(goon == 0) ; //等待父进程SIGUSR1信号，表示作业已加到链表中
                 goon = 0; //置0，为下一命令做准备
                 
@@ -605,7 +611,9 @@ void execOuterCmd(SimpleCmd *cmd){
             }
         }
 		else{ //父进程
-            if(cmd ->isBack){ //后台命令             
+            if(cmd ->isBack){ //后台命令
+				signal(SIGUSR2, setGoon2);
+				while(goon2==0);
                 fgPid = 0; //pid置0，为下一命令做准备
                 addJob(pid); //增加新的作业
                 kill(pid, SIGUSR1); //子进程发信号，表示作业已加入
@@ -614,6 +622,7 @@ void execOuterCmd(SimpleCmd *cmd){
                 signal(SIGUSR1, setGoon);
                 while(goon == 0) ;
                 goon = 0;
+				goon2=0;
             }else{ //非后台命令
                 fgPid = pid;
                 waitpid(pid, NULL, 0);
