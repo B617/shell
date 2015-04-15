@@ -784,7 +784,7 @@ case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
 #line 28 "flex.l"
-{inputBuff[input_i]='\0';puts(inputBuff);input_i=-1;return EOL;}
+{inputBuff[input_i]='\0';input_i=-1;return EOL;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
