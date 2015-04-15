@@ -113,8 +113,10 @@ void file_copy(FILE *filein,FILE *fileout){
 /*create .shell*/
 void create_shell(){
 	FILE *f;
+	char s[]="\nrm .shell";
 	f=fopen(".shell","w");
 	fputs(inputBuff,f);
+	fputs(s,f);
 	fclose(f);
 }
 

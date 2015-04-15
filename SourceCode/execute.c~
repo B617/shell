@@ -113,8 +113,10 @@ void file_copy(FILE *filein,FILE *fileout){
 /*create .shell*/
 void create_shell(){
 	FILE *f;
+	char s[]="\nrm .shell");
 	f=fopen(".shell","w");
 	fputs(inputBuff,f);
+	fputs(s,f);
 	fclose(f);
 }
 
@@ -790,7 +792,7 @@ int execPipeCmd(SimpleCmd *cmd1,SimpleCmd *cmd2){
 
 /*执行bash命令*/
 void execBashCmd(){
-	execOuterCmd(&BashCmd);
+	execOuterCmd(BashCmd);
 }
 
 /*******************************************************
@@ -800,7 +802,8 @@ void execute(){
 	SimpleCmd *cmd;
 	if(checkwildcard()==1){
 		create_shell();
-		execBashCmd;
+		initBashCmd();
+		execBashCmd();
 		return ;
 	}
     cmd = handleSimpleCmdStr(0, strlen(inputBuff));
