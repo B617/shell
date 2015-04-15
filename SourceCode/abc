@@ -1,20 +1,2 @@
-abc
-bison.tab.c
-bison.y
-bison.y~
-bison.y.old
-Demo
-Demo.c
-execute.c
-execute.c~
-execute.o
-flex.l
-flex.l~
-global.h
-global.h~
-lex.yy.c
-makefile
-makefile~
-user-sh
-ysh.conf
-ysh.conf~
+chilu    :0           2015-04-15 20:39 (:0)
+chilu    pts/0        2015-04-15 20:44 (:0)

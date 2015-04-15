@@ -414,6 +414,7 @@ void init(){
 SimpleCmd* handleSimpleCmdStr(int begin, int end){
     int i, j, k;
     int fileFinished; //记录命令是否解析完毕
+	int pipeFinished;
     char c, buff[10][40], inputFile[30], outputFile[30], *temp = NULL;
     SimpleCmd *cmd = (SimpleCmd*)malloc(sizeof(SimpleCmd));
     
@@ -438,8 +439,9 @@ SimpleCmd* handleSimpleCmdStr(int begin, int end){
     k = 0;
     j = 0;
     fileFinished = 0;
+	pipeFinished = 0;
     temp = buff[k]; //以下通过temp指针的移动实现对buff[i]的顺次赋值过程
-    while(i < end){
+    while(i < end&&!pipeFinished){
 		/*根据命令字符的不同情况进行不同的处理*/
         switch(inputBuff[i]){ 
             case ' ':
@@ -505,8 +507,11 @@ SimpleCmd* handleSimpleCmdStr(int begin, int end){
 					}
 				}
 				i++;
+//				printf("-------------------pipe %d\n",i);
 				cmd->nextCmd=handleSimpleCmdStr(i, end);
+//				printf("%s->%s\n",buff[0],cmd->nextCmd->args[0]);
 				fileFinished=1;
+				pipeFinished=1;
 				break;
 
             default: //默认则读入到temp指定的空间
@@ -780,7 +785,16 @@ int execPipeCmd(SimpleCmd *cmd1,SimpleCmd *cmd2){
 			close(pipe_fd[0]);
 			/*执行cmd2*/
 //			printf("execute cmd2\n");
-			execSimpleCmd(cmd2);
+			if(cmd2->nextCmd!=NULL){
+//				printf("pipe2 ok\n");
+				if(execPipeCmd(cmd2,cmd2->nextCmd)){
+					printf("pipe error\n");
+				}
+				free(cmd2->nextCmd);
+			}
+			else{
+				execSimpleCmd(cmd2);
+			}
 			exit(0);
 		}
 		close(pipe_fd[0]);
@@ -800,6 +814,9 @@ void execBashCmd(){
 ********************************************************/
 void execute(){
 	SimpleCmd *cmd;
+	#ifdef DEBUG
+	SimpleCmd *pcmd;
+	#endif
 	if(checkwildcard()==1){
 		create_shell();
 		initBashCmd();
@@ -808,6 +825,13 @@ void execute(){
 	}
     cmd = handleSimpleCmdStr(0, strlen(inputBuff));
 	if(cmd->nextCmd!=NULL){
+    #ifdef DEBUG
+		pcmd=cmd;
+		do{
+			printf("%s\n",pcmd->args[0]);
+			pcmd=pcmd->nextCmd;
+		}while(pcmd!=NULL);
+	#endif
 		if(execPipeCmd(cmd,cmd->nextCmd)){
 			printf("pipe error\n");
 		}
