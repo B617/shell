@@ -1204,90 +1204,18 @@ yyreduce:
     {
         case 2:
 #line 17 "bison.y" /* yacc.c:1646  */
-    {printf("1\n");return;}
+    {return;}
 #line 1209 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
 #line 18 "bison.y" /* yacc.c:1646  */
-    {printf("2\n");printf("%s\n",inputBuff);execute();commandDone=1;return;}
+    {execute();commandDone=1;return;}
 #line 1215 "bison.tab.c" /* yacc.c:1646  */
     break;
 
-  case 4:
-#line 21 "bison.y" /* yacc.c:1646  */
-    {printf("3\n");}
-#line 1221 "bison.tab.c" /* yacc.c:1646  */
-    break;
 
-  case 5:
-#line 22 "bison.y" /* yacc.c:1646  */
-    {printf("4\n");}
-#line 1227 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 6:
-#line 25 "bison.y" /* yacc.c:1646  */
-    {printf("5\n");}
-#line 1233 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 7:
-#line 26 "bison.y" /* yacc.c:1646  */
-    {printf("6\n");}
-#line 1239 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 8:
-#line 29 "bison.y" /* yacc.c:1646  */
-    {printf("7\n");}
-#line 1245 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 9:
-#line 32 "bison.y" /* yacc.c:1646  */
-    {printf("8\n");}
-#line 1251 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 10:
-#line 35 "bison.y" /* yacc.c:1646  */
-    {printf("9\n");}
-#line 1257 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 11:
-#line 36 "bison.y" /* yacc.c:1646  */
-    {printf("10\n");}
-#line 1263 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 12:
-#line 39 "bison.y" /* yacc.c:1646  */
-    {printf("11\n");}
-#line 1269 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 13:
-#line 40 "bison.y" /* yacc.c:1646  */
-    {printf("12\n");}
-#line 1275 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 14:
-#line 43 "bison.y" /* yacc.c:1646  */
-    {printf("13\n");}
-#line 1281 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 15:
-#line 44 "bison.y" /* yacc.c:1646  */
-    {printf("14\n");}
-#line 1287 "bison.tab.c" /* yacc.c:1646  */
-    break;
-
-
-#line 1291 "bison.tab.c" /* yacc.c:1646  */
+#line 1219 "bison.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

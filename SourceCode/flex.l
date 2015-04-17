@@ -24,9 +24,8 @@
 "&"	{inputBuff[input_i++]=' ';inputBuff[input_i++]='&';return AND;}
 "|"	{inputBuff[input_i++]=' ';inputBuff[input_i++]='|';return PIPE;}
 [ \t]	{}
-ÿ		{}
 \n	{inputBuff[input_i]='\0';input_i=-1;return EOL;}
-.+	{inputBuff[input_i++]=' ';copyarray(inputBuff,yytext);return STRING;}
+[^ \t\n&><|]+	{inputBuff[input_i++]=' ';copyarray(inputBuff,yytext);return STRING;}
 
 %%
 

@@ -14,34 +14,34 @@
 %token PIPE
 
 %%
-line            :	EOL				{printf("1\n");return;}
-                    |command EOL	{printf("2\n");execute();commandDone=1;return;}
+line            :	EOL				{return;}
+                    |command EOL	{execute();commandDone=1;return;}
 ;
 
-command         :   fgCommand		{printf("3\n");}
-                    |fgCommand AND	{printf("4\n");}
+command         :   fgCommand		
+                    |fgCommand AND	
 ;
 
-fgCommand       :   simpleCmd		{printf("5\n");}
-					|fgCommand	PIPE fgCommand	{printf("6\n");}
+fgCommand       :   simpleCmd		
+					|fgCommand	PIPE fgCommand	{printf("pipe\n");}
 ;
 
-simpleCmd       :   progInvocation inputRedirect outputRedirect	{printf("7\n");}
+simpleCmd       :   progInvocation inputRedirect outputRedirect	
 ;
 
-progInvocation  :   STRING args		{printf("8\n");}
+progInvocation  :   STRING args		
 ;
 
-inputRedirect   :   /* empty */		{printf("9\n");}
-                    |INPUT STRING	{printf("10\n");}
+inputRedirect   :   /* empty */		
+                    |INPUT STRING	
 ;
 
-outputRedirect  :   /* empty */		{printf("11\n");}
-                    |OUTPUT STRING	{printf("12\n");}
+outputRedirect  :   /* empty */		
+                    |OUTPUT STRING	
 ;
 
-args            :   /* empty */		{printf("13\n");}
-                    |args STRING	{printf("14\n");}
+args            :   /* empty */		
+                    |args STRING	
 ;
 %%
 
