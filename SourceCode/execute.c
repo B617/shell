@@ -499,6 +499,8 @@ SimpleCmd* handleSimpleCmdStr(int begin, int end){
 
             case '|'://管道指令的标志
 				if(j!=0){
+//					printf("when '|',temp[j-1]=%c\n",temp[j-1]);
+//					printf("inputFile[0]=%c\n",inputFile[0]);
 					temp[j]='\0';
 					j=0;
 					if(!fileFinished){
@@ -515,6 +517,7 @@ SimpleCmd* handleSimpleCmdStr(int begin, int end){
 				break;
 
             default: //默认则读入到temp指定的空间
+//				printf("inputBuff[i]=%c\n",inputBuff[i]);
                 temp[j++] = inputBuff[i++];
                 continue;
 		}
@@ -524,14 +527,15 @@ SimpleCmd* handleSimpleCmdStr(int begin, int end){
             i++;
         }
 	}
-    
-    if(inputBuff[end-1] != ' ' && inputBuff[end-1] != '\t' && inputBuff[end-1] != '&'){
+//	printf("inputFile: %s\n",inputFile);
+    if(inputBuff[end-1] != ' ' && inputBuff[end-1] != '\t' && inputBuff[end-1] != '&'&& !pipeFinished){
+//		printf("inpubBuff[end-1]=%c\n",inputBuff[end-1]);
         temp[j] = '\0';
         if(!fileFinished){
             k++;
         }
     }
-    
+//	printf("inputFile: %s\n",inputFile);
 	//依次为命令名及其各个参数赋值
     cmd->args = (char**)malloc(sizeof(char*) * (k + 1));
     cmd->args[k] = NULL;
@@ -540,7 +544,7 @@ SimpleCmd* handleSimpleCmdStr(int begin, int end){
         cmd->args[i] = (char*)malloc(sizeof(char) * (j + 1));   
         strcpy(cmd->args[i], buff[i]);
     }
-    
+//   	printf("inputFile: %s\n",inputFile);
 	//如果有输入重定向文件，则为命令的输入重定向变量赋值
     if(strlen(inputFile) != 0){
         j = strlen(inputFile);

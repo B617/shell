@@ -14,34 +14,34 @@
 %token PIPE
 
 %%
-line            :	EOL				{return;}
-                    |command EOL	{execute();commandDone=1;return;}
+line            :	EOL				{printf("1\n");return;}
+                    |command EOL	{printf("2\n");execute();commandDone=1;return;}
 ;
 
-command         :   fgCommand		
-                    |fgCommand AND	
+command         :   fgCommand		{printf("3\n");}
+                    |fgCommand AND	{printf("4\n");}
 ;
 
-fgCommand       :   simpleCmd
-					|fgCommand	PIPE fgCommand	
+fgCommand       :   simpleCmd		{printf("5\n");}
+					|fgCommand	PIPE fgCommand	{printf("6\n");}
 ;
 
-simpleCmd       :   progInvocation inputRedirect outputRedirect	
+simpleCmd       :   progInvocation inputRedirect outputRedirect	{printf("7\n");}
 ;
 
-progInvocation  :   STRING args		
+progInvocation  :   STRING args		{printf("8\n");}
 ;
 
-inputRedirect   :   /* empty */		
-                    |INPUT STRING	
+inputRedirect   :   /* empty */		{printf("9\n");}
+                    |INPUT STRING	{printf("10\n");}
 ;
 
-outputRedirect  :   /* empty */		
-                    |OUTPUT STRING	
+outputRedirect  :   /* empty */		{printf("11\n");}
+                    |OUTPUT STRING	{printf("12\n");}
 ;
 
-args            :   /* empty */		
-                    |args STRING	
+args            :   /* empty */		{printf("13\n");}
+                    |args STRING	{printf("14\n");}
 ;
 %%
 
@@ -63,7 +63,6 @@ int main(int argc, char** argv) {
     
     printf("chilu@Ubuntu:%s$ ", get_current_dir_name()); //打印提示符信息
     while(1){
-		printf("ok\n");
         yyparse(); //调用语法分析函数，该函数由yylex()提供当前输入的单词符号
         if(commandDone == 1){ //命令已经执行完成后，添加历史记录信息
             commandDone = 0;
