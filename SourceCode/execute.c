@@ -177,7 +177,7 @@ void rmJob(int sig, siginfo_t *sip, void* noused){
     Job *now = NULL, *last = NULL;
     
 //	printf("rmjob\n");
-//	printf("ignore=%d\n",ingnore);
+	printf("ignore=%d\n",ingnore);
     if(ingnore == 1){
         ingnore = 0;
         return;
@@ -208,13 +208,15 @@ void rmJob(int sig, siginfo_t *sip, void* noused){
 /*组合键命令ctrl+z*/
 void ctrl_Z(){
     Job *now = NULL;
-    if(fgPid == 0){ //前台没有作业则直接返回
-        return;
-    }
+	int i;
     
     //SIGCHLD信号产生自ctrl+z
     ingnore = 1;
-    
+
+    if(fgPid == 0){ //前台没有作业则直接返回
+        return;
+    }
+
 	now = head;
 	while(now != NULL && now->pid != fgPid)
 		now = now->next;
@@ -224,13 +226,14 @@ void ctrl_Z(){
     }
     
 	//修改前台作业的状态及相应的命令格式，并打印提示信息
-    strcpy(now->state, STOPPED); 
-    now->cmd[strlen(now->cmd)] = '&';
-    now->cmd[strlen(now->cmd) + 1] = '\0';
+    strcpy(now->state, STOPPED);
+	i=strlen(now->cmd);
+    now->cmd[i] = '&';
+    now->cmd[i + 1] = '\0';
     printf("[%d]\t%s\t\t%s\n", now->pid, now->state, now->cmd);
     
 	//发送SIGSTOP信号给正在前台运作的工作，将其停止
-    kill(fgPid, SIGSTOP);
+    kill(fgPid, SIGTSTP);
     fgPid = 0;
 }
 
@@ -251,12 +254,12 @@ void ctrl_C(){
 	//打印提示信息
     printf("[%d] is killed\n", fgPid);
 	//发送SIGSTOP信号给正在前台运作的工作，将其停止
-    kill(fgPid, SIGSTOP);
+    kill(fgPid, SIGINT);
 
     fgPid = 0;
 
     //SIGCHLD信号产生自ctrl+c
-    ingnore = 1;
+//    ingnore = 1;
 /*
 	if(head==NULL){
 		return;
@@ -337,6 +340,8 @@ void bg_exec(int pid){
     printf("[%d]\t%s\t\t%s\n", now->pid, now->state, now->cmd);
     
     kill(now->pid, SIGCONT); //向对象作业发送SIGCONT信号，使其运行
+	
+	fgPid=0;
 }
 
 /*******************************************************
