@@ -176,8 +176,14 @@ void rmJob(int sig, siginfo_t *sip, void* noused){
     pid_t pid;
     Job *now = NULL, *last = NULL;
     
+//	sleep(1);
+
 //	printf("rmjob\n");
-	printf("ignore=%d\n",ingnore);
+//	printf("ignore=%d\n",ingnore);
+//	printf("fgpid=%d\n",fgPid);
+//	printf("signo=%d\n",sip->si_signo);
+//	printf("sig=%d\n",sig);
+
     if(ingnore == 1){
         ingnore = 0;
         return;
@@ -185,8 +191,9 @@ void rmJob(int sig, siginfo_t *sip, void* noused){
     
     pid = sip->si_pid;
 
+//	waitpid(-1,NULL,WNOHANG);
     now = head;
-	while(now != NULL && now->pid < pid){
+	while(now != NULL && now->pid != pid){
 		last = now;
 		now = now->next;
 	}
@@ -194,6 +201,9 @@ void rmJob(int sig, siginfo_t *sip, void* noused){
     if(now == NULL){ //作业不存在，则不进行处理直接返回
         return;
     }
+	
+//	printf("pid=%d\n",pid);
+//	printf("rm %d\n",now->pid);
     
 	//开始移除该作业
     if(now == head){
@@ -203,6 +213,8 @@ void rmJob(int sig, siginfo_t *sip, void* noused){
     }
     
     free(now);
+
+//	fgPid=0;
 }
 
 /*组合键命令ctrl+z*/
@@ -233,7 +245,7 @@ void ctrl_Z(){
     printf("[%d]\t%s\t\t%s\n", now->pid, now->state, now->cmd);
     
 	//发送SIGSTOP信号给正在前台运作的工作，将其停止
-    kill(fgPid, SIGTSTP);
+    kill(fgPid, SIGSTOP);
     fgPid = 0;
 }
 
@@ -242,9 +254,7 @@ void ctrl_C(){
 //    Job *now = NULL;
 //	Job *p=NULL;
 //	int temp_pid=fgPid;
-    
-//	printf("ctrl_c\n");
-	
+
     if(fgPid == 0){ //前台没有作业则直接返回
         return;
     }
@@ -254,7 +264,7 @@ void ctrl_C(){
 	//打印提示信息
     printf("[%d] is killed\n", fgPid);
 	//发送SIGSTOP信号给正在前台运作的工作，将其停止
-    kill(fgPid, SIGINT);
+    kill(fgPid, SIGSTOP);
 
     fgPid = 0;
 
@@ -313,7 +323,7 @@ void fg_exec(int pid){
     printf("%s\n", now->cmd);
     kill(now->pid, SIGCONT); //向对象作业发送SIGCONT信号，使其运行
 //	printf("%d\n",now->pid);
-	sleep(1);
+	sleep(100);
     waitpid(now->pid, NULL, 0); //父进程等待前台进程的运行
 //	printf("ok\n");
 //	printf("%d\n",now->pid);
@@ -342,6 +352,8 @@ void bg_exec(int pid){
     kill(now->pid, SIGCONT); //向对象作业发送SIGCONT信号，使其运行
 	
 	fgPid=0;
+//	signal(SIGTSTP, SIG_IGN);
+//	signal(SIGINT, SIG_IGN);
 }
 
 /*******************************************************
@@ -644,7 +656,7 @@ void execOuterCmd(SimpleCmd *cmd){
                 kill(getppid(), SIGUSR1);
             }
 //			signal(SIGINT, SIG_IGN);
-//			signal(SIGTSTP, SIG_IGN);
+	//		signal(SIGTSTP, SIG_IGN);
             
             justArgs(cmd->args[0]);
             if(execv(cmdBuff, cmd->args) < 0){ //执行命令
