@@ -176,6 +176,8 @@ void rmJob(int sig, siginfo_t *sip, void* noused){
     pid_t pid;
     Job *now = NULL, *last = NULL;
     
+//	printf("rmjob\n");
+//	printf("ignore=%d\n",ingnore);
     if(ingnore == 1){
         ingnore = 0;
         return;
@@ -234,22 +236,28 @@ void ctrl_Z(){
 
 /*组合键命令ctrl+c*/
 void ctrl_C(){
-    Job *now = NULL;
-	Job *p=NULL;
-	int temp_pid=fgPid;
+//    Job *now = NULL;
+//	Job *p=NULL;
+//	int temp_pid=fgPid;
     
+//	printf("ctrl_c\n");
+	
     if(fgPid == 0){ //前台没有作业则直接返回
         return;
     }
+	
+//	printf("ctrl_c2\n");
 
 	//打印提示信息
     printf("[%d] is killed\n", fgPid);
 	//发送SIGSTOP信号给正在前台运作的工作，将其停止
     kill(fgPid, SIGSTOP);
+
     fgPid = 0;
+
     //SIGCHLD信号产生自ctrl+c
     ingnore = 1;
-
+/*
 	if(head==NULL){
 		return;
 	}
@@ -266,6 +274,7 @@ void ctrl_C(){
     if(now != NULL){ //找到前台作业，将前台作业从jobs中删除
         p->next=now->next;
     }
+*/
 
 }
 
@@ -292,7 +301,7 @@ void fg_exec(int pid){
     strcpy(now->state, RUNNING);
     
     signal(SIGTSTP, ctrl_Z); //设置signal信号，为下一次按下组合键Ctrl+Z做准备
-//	signal(SIGINT, ctrl_C);//设置signal信号，为下一次按下组合键Ctrl+C做准备
+	signal(SIGINT, ctrl_C);//设置signal信号，为下一次按下组合键Ctrl+C做准备
     i = strlen(now->cmd) - 1;
     while(i >= 0 && now->cmd[i] != '&')
 		i--;
@@ -300,7 +309,11 @@ void fg_exec(int pid){
     
     printf("%s\n", now->cmd);
     kill(now->pid, SIGCONT); //向对象作业发送SIGCONT信号，使其运行
-    waitpid(fgPid, NULL, 0); //父进程等待前台进程的运行
+//	printf("%d\n",now->pid);
+	sleep(1);
+    waitpid(now->pid, NULL, 0); //父进程等待前台进程的运行
+//	printf("ok\n");
+//	printf("%d\n",now->pid);
 }
 
 /*bg命令*/
@@ -625,6 +638,8 @@ void execOuterCmd(SimpleCmd *cmd){
                 printf("[%d]\t%s\t\t%s\n", getpid(), RUNNING, inputBuff);
                 kill(getppid(), SIGUSR1);
             }
+//			signal(SIGINT, SIG_IGN);
+//			signal(SIGTSTP, SIG_IGN);
             
             justArgs(cmd->args[0]);
             if(execv(cmdBuff, cmd->args) < 0){ //执行命令

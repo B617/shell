@@ -1466,9 +1466,7 @@ int main(int argc, char** argv) {
     while(1){
 		c=getchar();
 		if(c>0){
-			printf("in\n");
 			ungetc(c,stdin);
-			printf("out\n");
 		}
         yyparse(); //调用语法分析函数，该函数由yylex()提供当前输入的单词符号
         if(commandDone == 1){ //命令已经执行完成后，添加历史记录信息
