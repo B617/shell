@@ -711,7 +711,7 @@ void execSimpleCmd(SimpleCmd *cmd){
 		else{
             printf("bg 参数不合法，正确格式为：bg %%<int>\n");
         }
-    } else if (strcmp(cmd->args[0], "cat") ==0) { //cat命令
+    } /*else if (strcmp(cmd->args[0], "cat") ==0) { //cat命令
 		temp = cmd->args[1];
 		if(temp==NULL){
 			printf("cat 参数不合法，正确格式为: cat <filename> <filename>...\n");
@@ -729,7 +729,7 @@ void execSimpleCmd(SimpleCmd *cmd){
 				temp=cmd->args[i];
 			}
 		}
-	} else{ //外部命令
+	} */else{ //外部命令
         execOuterCmd(cmd);
     }
     
