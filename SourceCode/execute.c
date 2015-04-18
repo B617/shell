@@ -191,7 +191,7 @@ void rmJob(int sig, siginfo_t *sip, void* noused){
     
     pid = sip->si_pid;
 
-//	waitpid(-1,NULL,WNOHANG);
+	waitpid(-1,NULL,WNOHANG);
     now = head;
 	while(now != NULL && now->pid != pid){
 		last = now;
@@ -655,8 +655,8 @@ void execOuterCmd(SimpleCmd *cmd){
                 printf("[%d]\t%s\t\t%s\n", getpid(), RUNNING, inputBuff);
                 kill(getppid(), SIGUSR1);
             }
-//			signal(SIGINT, SIG_IGN);
-	//		signal(SIGTSTP, SIG_IGN);
+			signal(SIGINT, SIG_IGN);
+			signal(SIGTSTP, SIG_IGN);
             
             justArgs(cmd->args[0]);
             if(execv(cmdBuff, cmd->args) < 0){ //执行命令
